@@ -1,5 +1,10 @@
 import 'dart:convert';
+// import 'dart:io';
+// import 'dart:typed_data';
+import 'package:flutter/cupertino.dart';
+// import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+// import 'package:image_picker/image_picker.dart';
 import 'package:projekbaru/Connection/api.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
@@ -16,61 +21,113 @@ class TambahData extends StatefulWidget {
 class TambahDataState extends State<TambahData> {
   final formkey = GlobalKey<FormState>();
 
-  TextEditingController emailC = TextEditingController();
+  // Controllers for form fields
   TextEditingController namaC = TextEditingController();
-  TextEditingController alamatC = TextEditingController();
-  TextEditingController tglahirC = TextEditingController();
-  TextEditingController tplahirC = TextEditingController();
-  TextEditingController kelaminC = TextEditingController();
-  TextEditingController agamaC = TextEditingController();
-  String? selectedValue;
-  String? selectedReligion;
+  TextEditingController merkC = TextEditingController();
+  TextEditingController hargaC = TextEditingController();
+
+  // final ImagePicker _picker = ImagePicker();
+  // XFile? _image;
+  // Uint8List? _webImageBytes;
+
+  // Future<void> getImage() async {
+  //   final img = await _picker.pickImage(source: ImageSource.gallery);
+  //   if (img != null) {
+  //     setState(() {
+  //       _image = img;
+  //     });
+
+  //     if (kIsWeb) {
+  //       _webImageBytes = await img.readAsBytes();
+  //       setState(() {});
+  //     }
+  //   }
+  // }
+  // Future<void> uploadImage() async {
+  //   if (_image == null) return;
+
+  //   try {
+  //     final bytes = await _image!.readAsBytes();
+  //     final base64Image = base64Encode(bytes);
+
+  //     final response = await http.post(
+  //       Uri.parse('YOUR_SERVER_URL_HERE'),
+  //       headers: {"Content-Type": "application/json"},
+  //       body: jsonEncode({"image": base64Image}),
+  //     );
+
+  //     if (response.statusCode == 200) {
+  //       // Handle success
+  //       print("Image uploaded successfully: ${response.body}");
+  //     } else {
+  //       // Handle error
+  //       print("Failed to upload image: ${response.statusCode}");
+  //     }
+  //   } catch (e) {
+  //     print("Error uploading image: $e");
+  //   }
+  // }
 
   Future<http.Response> createSw() async {
     try {
+      Map<String, String> fields = {
+        "nama": namaC.text,
+        "merk": merkC.text,
+        "harga": hargaC.text,
+      };
+
+      // if (_image != null) {
+      //   if (kIsWeb) {
+      //     final bytes = await _image!.readAsBytes();
+      //     fields['photo'] = base64Encode(bytes);
+      //   } else {
+      //     final bytes = File(_image!.path).readAsBytesSync();
+      //     fields['photo'] = base64Encode(bytes);
+      //   }
+      // }
+
       final response = await http.post(
         Uri.parse(BaseUrl.tambah),
-        body: {
-          "email": emailC.text,
-          "nama": namaC.text,
-          "alamat": alamatC.text,
-          "kelamin": kelaminC.text, // Ensure that these fields are not null
-          "agama": agamaC.text,
-          "tglahir": tglahirC.text,
-          "tplahir": tplahirC.text,
-        },
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(fields),
       );
 
+      print("Response Status: ${response.statusCode}");
+      print("Response Body: ${response.body}");
+
       if (response.statusCode == 200) {
-        print("Data sent successfully: ${response.body}");
+        try {
+          final data = json.decode(response.body);
+          return response;
+        } catch (e) {
+          print("Error parsing JSON: $e");
+          throw Exception("Invalid JSON response: ${response.body}");
+        }
       } else {
         print("Failed to send data. Status code: ${response.statusCode}");
+        print("Response body: ${response.body}");
+        throw Exception("Failed to send data: ${response.body}");
       }
-
-      return response;
     } catch (e) {
       print("Error sending data: $e");
       rethrow;
     }
   }
 
-  void _onConfirm(context) async {
+  void _onConfirm(BuildContext context) async {
     try {
       http.Response response = await createSw();
       final data = json.decode(response.body);
 
       if (response.statusCode == 200 && data['success'] == true) {
-        // If the request is successful and the server returned success
         Navigator.of(context)
             .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
       } else {
-        // Show an error message if the request fails
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(data['message'] ?? 'Failed to save data'),
         ));
       }
     } catch (e) {
-      // Handle the error in case of failure
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("An error occurred: $e"),
       ));
@@ -91,150 +148,36 @@ class TambahDataState extends State<TambahData> {
           key: formkey,
           child: ListView(
             children: [
-              // Input NISN
-              TextFormField(
-                controller: emailC,
-                decoration: const InputDecoration(
-                  labelText: "Email",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 10),
-
               // Input Nama
               TextFormField(
                 controller: namaC,
+                textInputAction: TextInputAction.next,
                 decoration: const InputDecoration(
                   labelText: "Nama",
                   border: OutlineInputBorder(),
                 ),
               ),
               const SizedBox(height: 10),
-
-              // Input Alamat
+              // Input Merk
               TextFormField(
-                controller: alamatC,
+                controller: merkC,
+                textInputAction: TextInputAction.next,
                 decoration: const InputDecoration(
-                  labelText: "Alamat",
+                  labelText: "Merk",
                   border: OutlineInputBorder(),
                 ),
               ),
               const SizedBox(height: 10),
-
-              // Dropdown Jenis Kelamin
-              DropdownButtonFormField<String>(
-                decoration: const InputDecoration(
-                  labelText: "Jenis Kelamin",
-                  border: OutlineInputBorder(),
-                ),
-                value: selectedValue ??
-                    (kelaminC.text.isNotEmpty ? kelaminC.text : null),
-                items: const [
-                  DropdownMenuItem(
-                    value: "1", // ID untuk Laki-laki
-                    child: Text("Laki-laki"),
-                  ),
-                  DropdownMenuItem(
-                    value: "2", // ID untuk Perempuan
-                    child: Text("Perempuan"),
-                  ),
-                ],
-                onChanged: (String? value) {
-                  setState(() {
-                    selectedValue = value; // Set nilai yang dipilih
-                    kelaminC.text = selectedValue!; // Simpan ke controller
-                  });
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Jenis Kelamin tidak boleh kosong";
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 10),
-
-              // Dropdown Agama
-              DropdownButtonFormField<String>(
-                decoration: const InputDecoration(
-                  labelText: "Agama",
-                  border: OutlineInputBorder(),
-                ),
-                value: selectedReligion ??
-                    (agamaC.text.isNotEmpty ? agamaC.text : null),
-                items: const [
-                  DropdownMenuItem(
-                    value: "1", // ID untuk Islam
-                    child: Text("Islam"),
-                  ),
-                  DropdownMenuItem(
-                    value: "2", // ID untuk Kristen
-                    child: Text("Kristen"),
-                  ),
-                  DropdownMenuItem(
-                    value: "3", // ID untuk Katolik
-                    child: Text("Katolik"),
-                  ),
-                  DropdownMenuItem(
-                    value: "4", // ID untuk Hindu
-                    child: Text("Hindu"),
-                  ),
-                  DropdownMenuItem(
-                    value: "5", // ID untuk Buddha
-                    child: Text("Buddha"),
-                  ),
-                  DropdownMenuItem(
-                    value: "6", // ID untuk Lainnya
-                    child: Text("Konghucu"),
-                  ),
-                ],
-                onChanged: (String? value) {
-                  setState(() {
-                    selectedReligion = value; // Set nilai yang dipilih
-                    agamaC.text =
-                        selectedReligion ?? ''; // Simpan ke controller
-                  });
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Agama tidak boleh kosong";
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 10),
-
-              // Input Tanggal Lahir
+              // Input Harga
               TextFormField(
-                controller: tglahirC,
+                controller: hargaC,
+                textInputAction: TextInputAction.next,
                 decoration: const InputDecoration(
-                  labelText: "Tanggal Lahir",
+                  labelText: "Harga",
                   border: OutlineInputBorder(),
                 ),
-                readOnly: true,
-                onTap: () async {
-                  DateTime? pickedDate = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime(2000),
-                    lastDate: DateTime(2101),
-                  );
-
-                  if (pickedDate != null) {
-                    setState(() {
-                      tglahirC.text = "${pickedDate.toLocal()}".split(' ')[0];
-                    });
-                  }
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Tanggal lahir tidak boleh kosong";
-                  }
-                  return null;
-                },
               ),
               const SizedBox(height: 20),
-
               // Tombol Simpan
               ElevatedButton(
                 style: ElevatedButton.styleFrom(

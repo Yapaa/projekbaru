@@ -1,32 +1,27 @@
+import 'dart:io';
+
 class UserModel {
-  final int? id;
-  final String email, nama, tglahir, kelamin, agama, alamat;
+  final int id;
+  final String nama, merk;
+  final int harga;
   UserModel(
       {required this.id,
-      required this.email,
       required this.nama,
-      required this.tglahir,
-      required this.kelamin,
-      required this.agama,
-      required this.alamat});
+      required this.merk,
+      required this.harga,
+      });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       id: json['id'],
-      email: json['email'],
       nama: json['nama'],
-      tglahir: json['tglahir'],
-      kelamin: json['kelamin'],
-      agama: json['agama'],
-      alamat: json['alamat'],
+      merk: json['merk'],
+      harga: json['harga'],
     );
   }
   Map<String, dynamic> toJson() => {
-        'email': email,
         'nama': nama,
-        'tglahir': tglahir,
-        'kelamin': kelamin,
-        'agama': agama,
-        'alamat': alamat,
+        'merk': merk,
+        'harga': harga,
       };
 }

@@ -18,22 +18,17 @@ class Edit extends StatefulWidget {
 class EditState extends State<Edit> {
   final formkey = GlobalKey<FormState>();
 
-  late TextEditingController emailController,
+  late TextEditingController
       namaController,
-      alamatController,
-      jenis_kelaminController,
-      agamaController,
-      tanggal_lahirController;
+      merkController,
+      hargaController,
 
-  Future editSw() async {
+  Future; editSw() async {
     return await http.post(Uri.parse(BaseUrl.edit), body: {
       "id": widget.sw.id.toString(),
-      "email": emailController.text,
       "nama": namaController.text,
-      "alamat": alamatController.text,
-      "kelamin": jenis_kelaminController.text,
-      "agama": agamaController.text,
-      "tglahir": tanggal_lahirController.text
+      "merk": merkController.text,
+      "harga": hargaController.text
     });
   }
 
@@ -60,12 +55,9 @@ class EditState extends State<Edit> {
 
   @override
   void initState() {
-    emailController = TextEditingController(text: widget.sw.email);
     namaController = TextEditingController(text: widget.sw.nama);
-    alamatController = TextEditingController(text: widget.sw.alamat);
-    jenis_kelaminController = TextEditingController(text: widget.sw.kelamin);
-    agamaController = TextEditingController(text: widget.sw.agama);
-    tanggal_lahirController = TextEditingController(text: widget.sw.tglahir);
+    merkController = TextEditingController(text: widget.sw.merk);
+    hargaController = TextEditingController(text: widget.sw.harga.toString());
     super.initState();
   }
 
@@ -101,14 +93,11 @@ class EditState extends State<Edit> {
         height: double.infinity,
         padding: const EdgeInsets.all(20),
         child: Center(
-          child: EditDataSiswa(
+          child: FormView(
             formkey: formkey,
-            emailController: emailController,
             namaController: namaController,
-            alamatController: alamatController,
-            jenis_kelaminController: jenis_kelaminController,
-            agamaController: agamaController,
-            tanggal_lahirController: tanggal_lahirController,
+            merkController: merkController,
+            hargaController: hargaController,
           ),
         ),
       ),

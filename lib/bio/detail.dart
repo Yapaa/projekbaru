@@ -76,37 +76,21 @@ class _DetailSiswaState extends State<DetailSiswa> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "ID : ${widget.sw.id}",
-              style: const TextStyle(fontSize: 20),
-            ),
-            Text(
-              "Email : ${widget.sw.email}",
-              style: const TextStyle(fontSize: 20),
-            ),
-            const Padding(padding: EdgeInsets.all(10)),
+            // Text(
+            //   "ID : ${widget.sw.id}",
+            //   style: const TextStyle(fontSize: 20),
+            // ),
             Text(
               "Nama : ${widget.sw.nama}",
               style: const TextStyle(fontSize: 20),
             ),
+            // const Padding(padding: EdgeInsets.all(10)),
             Text(
-              "Alamat : ${widget.sw.alamat}",
+              "Merk : ${widget.sw.merk}",
               style: const TextStyle(fontSize: 20),
             ),
             Text(
-              "Gender : ${widget.sw.kelamin}",
-              style: const TextStyle(fontSize: 20),
-            ),
-            Text(
-              "Agama : ${widget.sw.agama}",
-              style: const TextStyle(fontSize: 20),
-            ),
-            Text(
-              "Tanggal Lahir : ${widget.sw.tglahir}",
-              style: const TextStyle(fontSize: 20),
-            ),
-            Text(
-              "Nama : ${widget.sw.nama}",
+              "Harga : ${widget.sw.harga}",
               style: const TextStyle(fontSize: 20),
             ),
           ],

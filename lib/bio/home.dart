@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:async'; // Pastikan nama file dan class sudah benar
+import 'dart:async'; 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:projekbaru/Connection/api.dart';
@@ -66,16 +66,16 @@ class HomeState extends State<Home> {
                 var data = snapshot.data![index];
                 return Card(
                   child: ListTile(
-                    leading: const Icon(Icons.person),
-                    trailing: const Icon(Icons.view_list),
+                    // leading: const Icon(Icons.person),
+                    trailing: const Icon(Icons.table_rows),
                     title: Text(
-                      "${data.email} - ${data.nama}",
+                      "${data.merk} - ${data.nama}",
                       style: const TextStyle(fontSize: 20),
                     ),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(data.alamat),
+                        Text(data.harga.toString()),
                       ],
                     ),
                     onTap: () {
